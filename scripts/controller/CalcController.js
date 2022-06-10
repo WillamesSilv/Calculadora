@@ -59,6 +59,43 @@ class CalcController {
         return (['+', '-', '*', '%', '/'].indexOf(value) > -1);
     }
 
+    pushOperation(value){
+
+        this._operation.push(value);
+
+        if(this._operation.length > 3){
+
+            this.calc();
+        }
+    }
+
+    calc(){
+
+        let last = this._operation.pop();
+
+        let result = eval(this._operation.join(""));
+
+        this._operation = [result, last];
+
+        //atualiza display
+        this.setLastNumberToDisplay();
+    }
+
+    setLastNumberToDisplay(){
+
+        let lastNumber;
+
+        for(let i = this._operation.length-1; i >= 0; i--){
+
+            if(!this.isOperator(this._operation[i])){
+                lastNumber = this._operation[i];
+                break;
+            }
+        }
+
+        this.displayCalc = lastNumber;
+    }
+
     addOperation(value){
 
         if(isNaN(this.getLastOperation())){
@@ -69,26 +106,30 @@ class CalcController {
 
             } else if(isNaN(value)){
                 
-                //Outra coisa
-                console.log(value)
+                console.log('outra coisa', value)
             } else {
                 
-                this._operation.push(value);
+                this.pushOperation(value);
+
+                //atualiza display
+                this.setLastNumberToDisplay();
             }   
 
         } else {
             if(this.isOperator(value)){
 
-                this._operation.push(value)
+                this.pushOperation(value)
 
             } else {
                 
                 //getLastOperation faz referencia ao ultimo valor do array, o value é a entrada atual
                 let newValue = this.getLastOperation().toString() + value.toString();
                 this.setLastOperation(parseInt(newValue));
+
+                //atualiza display
+                this.setLastNumberToDisplay();
             }
         }
-        console.log(this._operation)
 
     }
 
