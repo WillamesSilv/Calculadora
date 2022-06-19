@@ -16,6 +16,39 @@ class CalcController {
 
     }
 
+    pasteFromClipboard(){
+
+        document.addEventListener('paste', e => {
+
+            let text = e.clipboardData.getData('text');
+
+            this.displayCalc = parseFloat(text);
+            
+        })
+
+    }
+
+    copyToClipboard(){
+
+        //Criando o elemento input para poder selecionar o valor
+        let input = document.createElement('input');
+
+        //adicionando o que está no display para ser o valor do input
+        input.value = this.displayCalc;
+
+        //Inserindo o input no body para poder ser selecionado
+        document.body.appendChild(input);
+
+        //Selecionando o valor do input
+        input.select();
+
+        //Acessando o comando do sistema operacional
+        document.execCommand('copy');
+        
+        //Sendo removido porque na calculadora está sendo usado SVG
+        input.remove(); 
+    }
+
     initialize(){
         
         this.setDisplayDateTime();
@@ -28,6 +61,8 @@ class CalcController {
 
         //atualiza display
         this.setLastNumberToDisplay();
+
+        this.pasteFromClipboard();
         
     }
 
@@ -70,6 +105,10 @@ class CalcController {
                 case '8':
                 case '9':
                     this.addOperation(parseInt(e.key))
+                    break;
+
+                case 'c':
+                    if(e.ctrlKey) this.copyToClipboard();
                     break;
             }
         })
